@@ -1,0 +1,36 @@
+<h1>Blackjack!!</h1>
+<p><%= "Hi!, #{session[:player_name]}" %></p>
+
+<div class="well">
+  <h2>Dealer's cards</h2>
+  <% session[:dealer_cards].each do |card| %>
+    <%= card_image(card) %>
+  <% end %>
+  <p>Total value is <%= total_point(session[:dealer_cards]) %></p>
+  <% if @show_dealer_next_card %> 
+    <p>Dealer's point is <%= total_point(session[:dealer_cards]) %> and will hit.</p> 
+    <form action="/game/dealer/hit" method="post">
+      <input type="submit" value="See dealer's next card.." class="btn btn-primary">
+    </form>
+  <% end %>
+</div>
+
+<div class="well">
+  <h2>Player's cards</h2>
+  <% session[:player_cards].each do |card| %>
+    <%= card_image(card) %>
+  <% end %>
+  <p>Total value is <%= total_point(session[:player_cards]) %></p>  
+</div>
+
+
+
+<% if @show_hit_or_stay_button %>
+  <form id="hit_form" action="/game/player/hit" method="post" >
+    <input type="submit" class="btn btn-success" value="Hit" >
+  </form>
+
+  <form  id="stay_form" action="/game/player/stay" method="post">
+    <input type="submit" class="btn btn-warning" value="Stay" >
+  </form>
+<% end %>
