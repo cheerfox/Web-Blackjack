@@ -1,6 +1,13 @@
 <h1>Blackjack!!</h1>
 <p><%= "Hi!, #{session[:player_name]}" %></p>
 
+<% if @play_again %>
+  <h5>Would you like to play again?</h5>
+  <a href="/game" class="btn btn-primary">Yes</a>
+  <a href="/game_over" class="btn btn-default">No</a>
+<% end %>
+
+
 <div class="well">
   <h2>Dealer's cards</h2>
   <% session[:dealer_cards].each do |card| %>
@@ -8,7 +15,7 @@
   <% end %>
   <p>Total value is <%= total_point(session[:dealer_cards]) %></p>
   <% if @show_dealer_next_card %> 
-    <p>Dealer's point is <%= total_point(session[:dealer_cards]) %> and will hit.</p> 
+    <strong>Dealer's point is <%= total_point(session[:dealer_cards]) %> and will hit.</strong> 
     <form action="/game/dealer/hit" method="post">
       <input type="submit" value="See dealer's next card.." class="btn btn-primary">
     </form>
