@@ -14,7 +14,7 @@ helpers do
   def total_point(cards)
     point = 0
     cards.each do |card|
-      if card[1] == 'J' || card[1] == 'Q' || card[1] == 'K'
+      if %w(J Q K).include?(card[1])
         point += 10
       elsif card[1] == 'A'
         point += 11
