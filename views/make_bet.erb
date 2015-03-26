@@ -1,0 +1,8 @@
+<strong>Your account remains <%= session[:account_amount] %></strong>
+<form action='/make_bet' method="post">
+  <div class="form-group">
+    <label>Choose your bet</label>
+    <input type="number" class="form-control" name="bet_amount" placeholder="Please Enter your bet">
+  </div>
+  <button type="submit" class="btn btn-success">Bet</button>
+</form>

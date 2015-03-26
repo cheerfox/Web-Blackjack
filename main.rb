@@ -9,21 +9,6 @@ use Rack::Session::Cookie, :key => 'rack.session',
 BLACKJACK_AMOUNT = 21
 DEALER_HIT_MINIMUN = 17
 
-#use instance variable to handle success message and don't display hit or stay button when  busted
-#before filter
-#starover nav
-#image for cards 
-#css fix for hit stay btn and cards images
-#handle busted and blackjack condition
-#pevent empty player_name
-
-#play again
-#helper method winner loser tie
-#more precise message
-#Use constant for magic number
-#Hide the first card for dealer and flip it after player stay
-#bet mechnism
-
 helpers do
 
   def total_point(cards)
@@ -37,7 +22,6 @@ helpers do
         point += card[1].to_i
       end
     end
-  #correct ace
     cards.select {|card| card[1] == 'A'}.count.times do
       point -= 10 if point > BLACKJACK_AMOUNT
     end
@@ -63,14 +47,16 @@ helpers do
   end
 
   def winner!(message)
+    session[:account_amount] += session[:bet_amount].to_i
     @show_hit_or_stay_button = false
-    @success = "Congradulations #{session[:player_name]} win!! #{message}"
+    @success = "Congradulations #{session[:player_name]} win!! #{message}. Your account remains #{session[:account_amount]}"
     @play_again = true
   end
 
   def loser!(message)
+    session[:account_amount] -= session[:bet_amount].to_i
     @show_hit_or_stay_button = false
-    @error = "Sorry! #{session[:player_name]} Lose!! #{message}"
+    @error = "Sorry! #{session[:player_name]} Lose!! #{message}. Your account remains #{session[:account_amount]}"
     @play_again = true
   end
 
@@ -104,22 +90,30 @@ post '/new_player' do
     halt erb :new_player
   end
   session[:player_name] = params[:player_name]
+  session[:account_amount] = 500
+  redirect '/make_bet'
+end
+
+get '/make_bet' do
+  erb :make_bet
+end
+
+post '/make_bet' do
+  session[:bet_amount] = params[:bet_amount]
   redirect '/game'
 end
 
 get '/game' do
-  #set initial value
   suits = ['H', 'D', 'S', 'C']
   numbers = ['2', '3', '4', '5', '6', '7', '8', '9', '10' ,'J', 'Q', 'K']
   session[:deck] = suits.product(numbers).shuffle!
   session[:player_cards] = []
   session[:dealer_cards] = []
-  #deal cards
-  session[:player_cards] << session[:deck].pop
-  session[:dealer_cards] << session[:deck].pop
-  session[:player_cards] << session[:deck].pop
-  session[:dealer_cards] << session[:deck].pop
-  #render the template
+  2.times do
+    session[:player_cards] << session[:deck].pop
+    session[:dealer_cards] << session[:deck].pop
+  end
+  session[:turn] = session[:player_name]
   erb :game
 end
 
@@ -137,6 +131,7 @@ end
 post '/game/player/stay' do
   @success = "You stay in #{total_point(session[:player_cards])}"
   @show_hit_or_stay_button = false
+  session[:turn] = 'dealer'
   redirect 'game/dealer'
 end
 
@@ -179,4 +174,3 @@ end
 get '/game_over' do
   erb :game_over
 end
-
