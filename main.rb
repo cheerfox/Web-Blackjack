@@ -8,6 +8,10 @@ use Rack::Session::Cookie, :key => 'rack.session',
 
 BLACKJACK_AMOUNT = 21
 DEALER_HIT_MINIMUN = 17
+INITIAL_ACCOUNT_AMOUNT = 500
+
+#check for bet
+#Display remain account and the bet in this round
 
 helpers do
 
@@ -49,20 +53,20 @@ helpers do
   def winner!(message)
     session[:account_amount] += session[:bet_amount].to_i
     @show_hit_or_stay_button = false
-    @success = "Congradulations #{session[:player_name]} win!! #{message}. Your account remains #{session[:account_amount]}"
+    @winner = "Congradulations #{session[:player_name]} win!! #{message}. Your account remains #{session[:account_amount]}"
     @play_again = true
   end
 
   def loser!(message)
     session[:account_amount] -= session[:bet_amount].to_i
     @show_hit_or_stay_button = false
-    @error = "Sorry! #{session[:player_name]} Lose!! #{message}. Your account remains #{session[:account_amount]}"
+    @loser = "Sorry! #{session[:player_name]} Lose!! #{message}. Your account remains #{session[:account_amount]}"
     @play_again = true
   end
 
   def tie!(message)
     @show_hit_or_stay_button = false
-    @success = "It's tie!! #{message}"
+    @winner = "It's tie!! #{message}"
     @play_again = true
   end
 
@@ -90,17 +94,26 @@ post '/new_player' do
     halt erb :new_player
   end
   session[:player_name] = params[:player_name]
-  session[:account_amount] = 500
+  session[:account_amount] = INITIAL_ACCOUNT_AMOUNT
   redirect '/make_bet'
 end
 
 get '/make_bet' do
+  session[:bet_amount] = nil
   erb :make_bet
 end
 
 post '/make_bet' do
-  session[:bet_amount] = params[:bet_amount]
-  redirect '/game'
+  if params[:bet_amount].to_i == 0 || params[:bet_amount] == nil
+    @error = "You must have a bet!!"
+    halt erb :make_bet
+  elsif params[:bet_amount].to_i > session[:account_amount]
+    @error = "You didn't have enough money to bet this amount!!"
+    halt erb :make_bet
+  else
+    session[:bet_amount] = params[:bet_amount].to_i
+    redirect '/game'
+  end
 end
 
 get '/game' do
@@ -125,7 +138,7 @@ post '/game/player/hit' do
   elsif player_point == BLACKJACK_AMOUNT
     winner!("#{session[:player_name]} hit Blackjack!!")
   end
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do
@@ -148,7 +161,7 @@ get '/game/dealer' do
     @show_dealer_next_card = true
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/dealer/hit' do
@@ -167,7 +180,7 @@ get '/game/compare' do
   else
     tie!("Tie at #{player_point}")
   end
-  erb :game
+  erb :game, layout: false
 
 end
 

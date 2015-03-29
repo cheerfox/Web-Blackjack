@@ -1,6 +1,6 @@
 form#hit_form {
   float: left;
-  margin-right: 5px
+  margin-right: 5px;
 }
 
 form#stay_form {
@@ -8,5 +8,5 @@ form#stay_form {
 }
 
 img.card_image {
-  margin: 0 5px 10px 0
+  margin: 0 5px 10px 0;
 }
