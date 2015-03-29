@@ -32,9 +32,9 @@ helpers do
   def card_image(card)
     suit = case card[0]
       when 'C' then 'clubs'
-      when 'D' then 'Diamonds'
-      when 'H' then 'Hearts'
-      when 'S' then 'Spades'
+      when 'D' then 'diamonds'
+      when 'H' then 'hearts'
+      when 'S' then 'spades'
     end
     number = card[1]
     number = case number
