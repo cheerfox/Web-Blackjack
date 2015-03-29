@@ -10,9 +10,6 @@ BLACKJACK_AMOUNT = 21
 DEALER_HIT_MINIMUN = 17
 INITIAL_ACCOUNT_AMOUNT = 500
 
-#check for bet
-#Display remain account and the bet in this round
-
 helpers do
 
   def total_point(cards)
